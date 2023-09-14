@@ -1,0 +1,52 @@
+package com.example.myAngularApp.service;
+
+import com.example.myAngularApp.model.employee;
+import com.example.myAngularApp.repository.employeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class employeeService {
+
+    @Autowired
+    private employeeRepository employeeRepository;
+
+    public List<employee> getAllEmployees() {
+        return employeeRepository.findAll();
+    }
+
+    public Optional<employee> getEmployeeById(Long id) {
+        return employeeRepository.findById(id);
+    }
+
+    public employee createEmployee(employee employee) {
+        return employeeRepository.save(employee);
+    }
+
+    public Optional<employee> updateEmployee(Long id, employee employeeDetails) {
+        Optional<employee> optionalEmployee = employeeRepository.findById(id);
+        if (optionalEmployee.isPresent()) {
+            employee employee = optionalEmployee.get();
+            employee.setName(employeeDetails.getName());
+            //employee.setDepartment(employeeDetails.getDepartment());
+            // Set other properties as needed
+            return Optional.of(employeeRepository.save(employee));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public boolean deleteEmployee(Long id) {
+        Optional<employee> optionalEmployee = employeeRepository.findById(id);
+        if (optionalEmployee.isPresent()) {
+            employeeRepository.delete(optionalEmployee.get());
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+

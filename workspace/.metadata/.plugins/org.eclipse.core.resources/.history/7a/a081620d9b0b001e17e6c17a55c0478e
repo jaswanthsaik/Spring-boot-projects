@@ -1,0 +1,5 @@
+package com.example.myAngularApp.model;
+
+public class SignupRequest {
+
+}

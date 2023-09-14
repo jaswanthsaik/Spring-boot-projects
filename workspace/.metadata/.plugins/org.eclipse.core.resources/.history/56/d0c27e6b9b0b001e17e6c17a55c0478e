@@ -1,0 +1,5 @@
+package com.example.myAngularApp.repository;
+
+public class UserRepository {
+
+}

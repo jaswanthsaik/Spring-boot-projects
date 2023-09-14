@@ -1,0 +1,36 @@
+package com.example.myAngularApp.controller;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.myAngularApp.model.SignupRequest;
+import com.example.myAngularApp.model.User;
+import com.example.myAngularApp.service.UserService;
+
+@RestController
+@RequestMapping("/api")
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @PostMapping("/signup")
+    public ResponseEntity<String> signup(@RequestBody SignupRequest signupRequest) {
+        if (userService.existsByUsername(signupRequest.getUsername())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Username already exists");
+        }
+
+        User user = new User();
+        user.setUsername(signupRequest.getUsername());
+        user.setPassword(signupRequest.getPassword());
+
+        userService.createUser((org.apache.catalina.User) user);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body("User created successfully");
+    }
+}

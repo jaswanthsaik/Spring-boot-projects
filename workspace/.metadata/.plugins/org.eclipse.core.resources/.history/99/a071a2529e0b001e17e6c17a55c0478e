@@ -1,0 +1,26 @@
+package com.example.myAngularApp.controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.myAngularApp.model.User;
+import com.example.myAngularApp.repository.UserRepository;
+
+@Service
+public class UserController {
+
+  private final UserRepository userRepository;
+
+  @Autowired
+  public UserController(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
+
+  public User signUp(String username, String password, String email) {
+    User user = new User();
+    user.setUsername(username);
+    user.setPassword(password);
+
+    return userRepository.save(user);
+  }
+
+}

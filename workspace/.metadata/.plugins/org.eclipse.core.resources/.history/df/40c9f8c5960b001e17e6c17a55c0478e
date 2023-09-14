@@ -1,0 +1,30 @@
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class AuthController {
+
+    @PostMapping("/api/login")
+    public ResponseEntity<String> login(@RequestBody AuthRequest authRequest) {
+        // Perform authentication logic here
+        // You can validate the username and password against your backend data or authentication service
+
+        if (isValidCredentials(authRequest.getUsername(), authRequest.getPassword())) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    private boolean isValidCredentials(String username, String password) {
+        // Implement your authentication logic here
+        // Check if the provided username and password are valid
+        // You can use your database, user repository, or external authentication service
+
+        // Example authentication logic:
+        return username.equals("admin") && password.equals("password");
+    }
+}

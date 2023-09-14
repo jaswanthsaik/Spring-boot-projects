@@ -1,0 +1,77 @@
+package com.example.myAngularApp.controller;
+
+import com.example.myAngularApp.model.employee;
+import com.example.myAngularApp.repository.employeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/v1")
+@CrossOrigin("http://localhost:4200")
+public class employeeController {
+
+    @Autowired
+    private employeeRepository employeeRepository;
+
+    // Get all employees
+    @GetMapping("/employees")
+    public List<employee> getAllEmployees() {
+        return employeeRepository.findAll();
+    }
+
+    // Get employee by ID
+    @GetMapping("/employees/{id}")
+    public ResponseEntity<employee> getEmployeeById(@PathVariable Long id) {
+        Optional<employee> employee = employeeRepository.findById(id);
+        return employee.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Create a new employee
+    @PostMapping("/employees")
+    public ResponseEntity<employee> createEmployee(@RequestBody employee employee) {
+        try {
+            employee savedEmployee = employeeRepository.save(employee);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedEmployee);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    // Update an existing employee
+    @PutMapping("/employees/{id}")
+    public ResponseEntity<employee> updateEmployee(@PathVariable Long id, @RequestBody employee employeeDetails) {
+        Optional<employee> optionalEmployee = employeeRepository.findById(id);
+        if (optionalEmployee.isPresent()) {
+            employee existingEmployee = optionalEmployee.get();
+            existingEmployee.setName(employeeDetails.getName());
+            existingEmployee.setAge(employeeDetails.getAge());
+            existingEmployee.setGender(employeeDetails.getGender());
+            existingEmployee.setPhoneNumber(employeeDetails.getPhoneNumber());
+            existingEmployee.setDateOfBirth(employeeDetails.getDateOfBirth());
+            // Set other properties as needed
+            employee updatedEmployee = employeeRepository.save(existingEmployee);
+            return ResponseEntity.ok(updatedEmployee);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+
+    // Delete an employee
+    @DeleteMapping("/employees/{id}")
+    public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
+        Optional<employee> optionalEmployee = employeeRepository.findById(id);
+        if (optionalEmployee.isPresent()) {
+            employeeRepository.delete(optionalEmployee.get());
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
